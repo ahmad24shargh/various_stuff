@@ -382,13 +382,13 @@
 # https://t.me/krenalxx
 # https://t.me/gudang_public
 
-0.0.0.0 vpbank.zimperium.com
-0.0.0.0 zapac-rfd.zimperium.com
-0.0.0.0 cdn.zimperium.com
-0.0.0.0 edge.zimperium.com
-0.0.0.0 stest.zimperium.com
-0.0.0.0 zapac.zimperium.com
-0.0.0.0 s3.brimo.nsgt.bri.co.id
-0.0.0.0 mobile.protectt.ai
-0.0.0.0 t3.protectt.ai
-0.0.0.0 t4.protectt.ai
+#0.0.0.0 vpbank.zimperium.com
+#0.0.0.0 zapac-rfd.zimperium.com
+#0.0.0.0 cdn.zimperium.com
+#0.0.0.0 edge.zimperium.com
+#0.0.0.0 stest.zimperium.com
+#0.0.0.0 zapac.zimperium.com
+#0.0.0.0 s3.brimo.nsgt.bri.co.id
+#0.0.0.0 mobile.protectt.ai
+#0.0.0.0 t3.protectt.ai
+#0.0.0.0 t4.protectt.ai
