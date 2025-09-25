@@ -1,7 +1,7 @@
 #! /data/data/com.termux/files/usr/bin/bash
 
 if ! type file > /dev/null; then
-  pkg install -y file
+  yes | pkg install file
 fi
 export RED='\033[0;31m'
 export GREEN='\033[0;32m'
@@ -10,9 +10,8 @@ export separator=$(awk -v i=$(stty -a <"$(tty)" | grep -Po '(?<=columns )\d+') '
 
 list_elf()
 {
-	sudo find $1 -type f -executable -exec sh -c "file {} | grep -Pi ': elf (32|64)-bit' > /dev/null" \; -print | grep -E '(magisk|ksu|lpu|ap|sus)[^/]*$' | cut -sd / -f 4- | awk '$0="./"$0'
-}
-
+sudo find $1 -type f -executable -exec sh -c "file {} | grep -Pi ': elf (32|64)-bit' > /dev/null" \; -print | grep -E '(magisk|ksu|ap|sus)[^/]*$' | cut -sd / -f 4- | awk '$0="./"$0'
+	}
 clear
 if [ $(id -u) -le '1000' ];then
 	echo "Error: Cannot run script as root or system"
@@ -36,7 +35,7 @@ declare -a names
 declare -a author
 declare -a versions
 declare -a ids
-files=$(sudo find /data/adb/modules/ -type f -name 'module.prop' 2> /dev/null)
+files=$(sudo find /data/adb/modules/ -maxdepth 2 -type f -name 'module.prop' 2> /dev/null)
 
 if [[ -z ${files[0]} ]]; then
     echo "No modules were found in /data/adb/modules/ !!"
@@ -86,10 +85,10 @@ fi
 
 if [ $(sudo find "/data/adb/lspd/config/modules_config.db") ];then
 	if ! type "sqlite3" &> /dev/null;then
-		pkg install -y sqlite &> /dev/null
+		yes | pkg install sqlite &> /dev/null
 	fi
 	if ! type "aapt" &> /dev/null;then
-		pkg install -y aapt &> /dev/null
+		yes | pkg install aapt &> /dev/null
 	fi
 	
 	entries=($(sudo sqlite3 /data/adb/lspd/config/modules_config.db  "select mid,module_pkg_name,apk_path,enabled from modules where mid != 1" 2>/dev/null))
