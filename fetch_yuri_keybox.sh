@@ -1,0 +1,2 @@
+#!/bin/sh
+curl https://raw.githubusercontent.com/dpejoh/yurikey/refs/heads/main/conf | base64 -d | sed -n -E 's/^KEYBOX_BASE64_PAYLOAD=\"([^\"]+)\"/\1/p' | base64 -d | sed -E '/<\!\-.*http.*/d' | sed -E 's/([^\.\:]*)(http.*|.*t.me.*)/\1\">/' > keybox.xml
