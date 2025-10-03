@@ -10,7 +10,7 @@ export separator=$(awk -v i=$(stty -a <"$(tty)" | grep -Po '(?<=columns )\d+') '
 
 list_elf()
 {
-sudo find $1 -type f -executable -exec sh -c "file {} | grep -Pi ': elf (32|64)-bit' > /dev/null" \; -print | grep -E '(magisk|ksu|ap|sus)[^/]*$' | cut -sd / -f 4- | awk '$0="./"$0'
+sudo find $1 -type f -executable -exec sh -c "file {} | grep -Pi ': elf (32|64)-bit' > /dev/null" \; -print | grep -E '(magisk|ksu|ap|sus|lpu)[^/]*$' | cut -sd / -f 4- | awk '$0="./"$0'
 	}
 clear
 if [ $(id -u) -le '1000' ];then
