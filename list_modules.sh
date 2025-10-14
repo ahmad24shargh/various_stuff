@@ -11,7 +11,7 @@ export separator=$(awk -v i=$(stty -a <"$(tty)" | grep -Po '(?<=columns )\d+') '
 list_elf()
 {
 sudo find $1 -type f -executable -exec sh -c "file {} | grep -Pi ': elf (32|64)-bit' > /dev/null" \; -print | grep -E '(magisk|ksu|ap|sus|lpu)[^/]*$' | cut -sd / -f 4- | awk '$0="./"$0'
-	}
+}
 clear
 if [ $(id -u) -le '1000' ];then
 	echo "Error: Cannot run script as root or system"
@@ -91,8 +91,10 @@ if [ $(sudo find "/data/adb/lspd/config/modules_config.db") ];then
 		yes | pkg install aapt &> /dev/null
 	fi
 	
-	entries=($(sudo sqlite3 /data/adb/lspd/config/modules_config.db  "select mid,module_pkg_name,apk_path,enabled from modules where mid != 1" 2>/dev/null))
-	
+	entries=($(sudo sqlite3 /data/adb/lspd/config/modules_config.db  "select mid,module_pkg_name,apk_path,enabled from modules where mid != 1 ORDER BY module_pkg_name Asc" 2>/dev/null))
+	if [ "${#entries[@]}" = 0 ];then
+		entries=($(sudo sqlite3 /data/adb/lspd/config/modules_config.db  "SELECT modules_state.user_id,modules.module_pkg_name,modules.apk_path,'modules_state'.enabled FROM modules INNER JOIN modules_state ON modules.module_pkg_name = modules_state.module_pkg_name WHERE modules.module_pkg_name != 'lspd' ORDER BY modules.module_pkg_name Asc" 2>/dev/null))
+	fi
 	if [ "${#entries[@]}" = 0 ]; then
 		# No lsposed modules found.
 		echo $separator
@@ -101,10 +103,10 @@ if [ $(sudo find "/data/adb/lspd/config/modules_config.db") ];then
 		echo $separator
 		echo "xposed modules:"
     	for entry in "${entries[@]}"; do
-    		xposed_badging=$(sudo aapt dump badging $(echo $entry | cut -d "|" -f 3))
-    		IFS=$" " names=$(echo $xposed_badging | grep -Eo "application-label:.*" | cut -d : -f 2 )
-    		echo "$counter-Name: ${names[0]} - $(echo $xposed_badging | grep -Eo "versionName=[^ ]*" | cut -d " " -f 2 | cut -d = -f 2)$([ $(echo $entry | cut -d "|" -f 4) -eq '0' ] && echo -e " - ${RED}DISABLED${NC}")"
-    		echo "  Pakage: $(echo $xposed_badging | grep -Eo "package: name=[^ ]*" | cut -d " " -f 2 | cut -d = -f 2)"
+    		xposed_badging=$(sudo aapt dump badging $(echo $entry | cut -d "|" -f 3) 2>/dev/null)
+    		names=$(echo $xposed_badging | grep -Eo "application-label:'[^']+'" | cut -d':' -f 2-)
+    		echo "$counter-Name: ${names[0]} - $(echo $xposed_badging | grep -Eo "versionName='[^']*'" | cut -d'=' -f 2)$([ $(echo $entry | cut -d "|" -f 4) -eq '0' ] && echo -e " - ${RED}DISABLED${NC}")"
+    		echo "  Pakage: $(echo $xposed_badging | grep -Eo "package: name='[^']*'" | cut -d'=' -f 2)"
     		let counter++
 		done
 	fi
