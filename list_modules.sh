@@ -105,16 +105,18 @@ if [ $(sudo find "/data/adb/lspd/config/modules_config.db") ];then
     	for entry in "${entries[@]}"; do
     		xposed_badging=$(sudo aapt dump badging $(echo $entry | cut -d "|" -f 3) 2>/dev/null)
     		names=$(echo $xposed_badging | grep -Eo "application-label:'[^']+'" | cut -d':' -f 2-)
-    		echo "$counter-Name: ${names[0]} - $(echo $xposed_badging | grep -Eo "versionName='[^']*'" | cut -d'=' -f 2)$([ $(echo $entry | cut -d "|" -f 4) -eq '0' ] && echo -e " - ${RED}DISABLED${NC}")"
-    		echo "  Pakage: $(echo $xposed_badging | grep -Eo "package: name='[^']*'" | cut -d'=' -f 2)"
+    		echo $(echo "$counter-Name: ${names[0]} - $(echo $xposed_badging | grep -Eo "versionName='[^']*'" | cut -d'=' -f 2)$([ $(echo $entry | cut -d "|" -f 4) -eq '0' ] && echo -e " - ${RED}DISABLED${NC}")" | tr -d "'")
+    		echo $(echo "  Pakage: $(echo $xposed_badging | grep -Eo "package: name='[^']*'" | cut -d'=' -f 2)" | tr -d "'")
     		let counter++
 		done
 	fi
 fi
 echo $separator
-echo "List of executable files in /data/adb ..."
-list_elf "/data/adb"
-echo $separator
+if [ ! -z $1 ];then
+	echo "List of executable files in /data/adb ..."
+	list_elf "/data/adb"
+	echo $separator
+fi	
 IFS=$SAVEIFS
 # ss_name="/sdcard/$(date +"$(tr -dc A-Za-z0-9 </dev/urandom | head -c 7)-%F#%X").png"
 # sudo screencap -p $ss_name &> /dev/null
